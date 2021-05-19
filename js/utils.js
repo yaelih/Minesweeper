@@ -25,7 +25,6 @@ function buildAllLocations(board) {
 }
 
 function renderCell(i, j, value) {
-    // var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
     var elCell = document.querySelector(`.cell-${i}-${j}`)
     elCell.innerHTML = value;
 }
