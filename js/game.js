@@ -1,5 +1,5 @@
 const MINE = '&#x1f4a3;';
-const FLAG = '&#9971;'; //flag on 
+const FLAG = '&#9971;'; 
 const EMPTY = ' ';
 
 var gBoard;
@@ -38,7 +38,6 @@ function buildBoard() {
 
     board = addRandomMines(board, gLevel.MINES);
     board = setMinesNegsCount(board)
-
     // console.log(board);
     return board;
 }
@@ -115,10 +114,15 @@ function cellClicked(elCell, i, j) {
     cell.isShown = true;
     if (cell.isMine) {
         elCell.innerHTML = MINE;
+        gGame.shownCount++;
         revealAllMines();
         gameOver();
     } else {
+        // TODO: replace '0' with EMPTY after adding background to cells
+        // elCell.innerHTML = (cell.minesAroundCount === 0) ? EMPTY : cell.minesAroundCount;
         elCell.innerHTML = cell.minesAroundCount;
+        // TODO: Fix and Replace the above with this function
+        // expandShown(gBoard, elCell, i, j)
         if (checkGameOver()) console.log('you won');
     }
 }
@@ -126,21 +130,27 @@ function cellClicked(elCell, i, j) {
 function cellMarked(e, elCell) {
     e.preventDefault();
     if (!gGame.isOn) return
-    var location = getLocationOfCell(elCell)
-    var cell = gBoard[location.i][location.j];
+    var cell = getCellfromElement(elCell);
     if (cell.isShown) return;
     if (cell.isMarked) {
         cell.isMarked = false;
         elCell.innerHTML = EMPTY;
+        gGame.markedCount--;
     } else {
         cell.isMarked = true;
         elCell.innerHTML = FLAG;
+        gGame.markedCount++;
         if (checkGameOver()) console.log('you won');
     }
 }
 
+function getCellfromElement(elCell) {
+    var location = getLocationOfElement(elCell)
+    return gBoard[location.i][location.j];
+}
+
 // Returns the location of a specific cell
-function getLocationOfCell(elCell) {
+function getLocationOfElement(elCell) {
     var cellClass = elCell.classList[1]
     var cellClassAsArray = cellClass.split('-')
     var cellI = +cellClassAsArray[1]
@@ -154,7 +164,6 @@ function checkGameOver() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[i].length; j++) {
             var cell = gBoard[i][j]
-            // console.log(`cell ${i} ${j} isMarked: ${cell.isMarked} isMine: ${cell.isMine} isShown: ${cell.isShown}`);
             if (!cell.isShown) {
                 if (cell.isMarked) {
                     if (!cell.isMine) return false;
@@ -179,16 +188,40 @@ function revealAllMines() {
     }
 }
 
-// When user clicks a cell with no mines around, we need to open not only that cell, but also its neighbors. 
-// NOTE: start with a basic implementation that only opens the non-mine 1st degree neighbors 
+
+//=====IN PROGRESS =====
 // BONUS: if you have the time later, try to work more like the real algorithm (see description at the Bonuses 
 // section below)
 function expandShown(board, elCell, i, j) {
+    // console.log(i, j, elCell)
+    var cell = getCellfromElement(elCell);
+    if (cell.minesAroundCount > 0) {
+        elCell.innerHTML = cell.minesAroundCount;
+        gGame.shownCount++;
+        console.log(gGame.shownCount)
+        return
+    }
+    renderCell(i, j, cell.minesAroundCount)
+    for (var cellI = i - 1; cellI <= i + 1; cellI++) {
+        if (cellI < 0 || cellI >= board.length) continue;
+        for (var cellJ = j - 1; cellJ <= j + 1; cellJ++) {
+            if (cellI === i && cellJ === j) continue;
+            if (cellJ < 0 || cellJ >= board[cellI].length) continue;
+            cell = gBoard[cellI][cellJ];
 
+            renderCell(cellI, cellJ, cell.minesAroundCount)
+            // TODO: work on recursion solution
+            // console.log('i-j', cellI, cellJ, 'elCell', elCell)
+            // var elCell = document.querySelector(`.cell-${cellI}-${cellJ}`);
+            // expandShown(board, elCell, i, j);
+        }
+    }
+    return
 }
 
 function gameOver() {
     gGame.isOn = false;
+    console.log('Game over - you lost')
 }
 
 function restartGame() {

@@ -10,12 +10,10 @@ function createMat(ROWS, COLS) {
     return mat
 }
 
-
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
- //build all locations
 function buildAllLocations(board) {
     var locations = [];
     for (var i = 0; i < board.length; i++) {
