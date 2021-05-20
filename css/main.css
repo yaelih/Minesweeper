@@ -87,6 +87,11 @@ table {
     margin: 20px auto 50px auto;
 }
 
+.hint {
+    font-size: 2em;
+    cursor: pointer;
+}
+
 .footer {
     position: fixed;
     padding: 10px;

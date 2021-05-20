@@ -9,7 +9,7 @@ const HINT_SELECTED = '&#128262;';
 
 var gBoard;
 var gGame;
-// I've changed the suggested solution of gLevel
+// I've changed the suggested example of gLevel
 var gLevel = 'Beginner';
 var gModes = {
     'Beginner': { SIZE: 4, MINES: 2 },
@@ -18,17 +18,20 @@ var gModes = {
 }
 var gStartTime;
 var gTimerInterval;
+var gMovesHistory;
 
 var gElGameStateBtn = document.querySelector('.game-state');
 var gElMarked = document.querySelector('.marked span');
 var gElTimer = document.querySelector('.timer span');
 var gElLives = document.querySelector('.lives span');
+var gElUndoBtn = document.querySelector(".undo button");
 var gElClickedHint;
 
 
 function initGame() {
     gStartTime = null;
     gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0, lives: 3, hints: 3, isHintOn: false }
+    gMovesHistory = [];
     gBoard = buildBoard()
     renderBoard(gBoard);
     renderLevelBtns();
@@ -38,6 +41,7 @@ function initGame() {
     gElTimer.innerText = gGame.secsPassed;
     gElGameStateBtn.innerHTML = NEW_GAME;
     gElMarked.innerText = gGame.markedCount;
+    gElUndoBtn.disabled = true;
 }
 
 // Builds empty board
@@ -117,6 +121,7 @@ function startGame(i, j) {
     renderTime();
     gGame.isOn = true;
     gTimerInterval = setInterval(renderTime, 1000)
+    gElUndoBtn.disabled = false;
 }
 
 //Change implementation to make it more efficient
@@ -194,6 +199,7 @@ function cellClicked(elCell, i, j) {
         // decrease from mines counter
         gGame.lives--;
         gElLives.innerText = gGame.lives;
+        gMovesHistory.push( {location: {i, j}, isShown: true} );
         if (gGame.lives < 1) {
             revealAllMines();
             gameOver();
@@ -206,8 +212,8 @@ function cellClicked(elCell, i, j) {
 
 function cellMarked(e, elCell) {
     e.preventDefault();
+    var location = getLocationOfElement(elCell)
     if (!gStartTime) {
-        var location = getLocationOfElement(elCell)
         startGame(location.i, location.j);
     }
     if (!gGame.isOn) return
@@ -221,8 +227,11 @@ function cellMarked(e, elCell) {
         cell.isMarked = true;
         elCell.innerHTML = FLAG;
         gGame.markedCount++;
+        // gMovesHistory.push( {location: {i: location.i, j: location.j}, isShown: true} );
         if (checkGameOver()) gameOver(WIN);
     }
+    gMovesHistory.push( {location: {i: location.i, j: location.j}, isShown: false} );
+    console.log('history', gMovesHistory)
     gElMarked.innerText = gGame.markedCount;
 }
 
@@ -281,10 +290,14 @@ function expandShown(board, elCell, i, j) {
         elCell.innerHTML = cell.minesAroundCount;
         gGame.shownCount++;
         elCell.classList.add('shown');
+        gMovesHistory.push( {location: {i, j}, isShown: true} );
+        console.log('history', gMovesHistory)
         return
     }
     gGame.shownCount++;
     elCell.classList.add('shown');
+    gMovesHistory.push( {location: {i, j}, isShown: true} );
+    console.log('history', gMovesHistory)
     //the following line renders '0'
     // renderCell(i, j, cell.minesAroundCount)
 
@@ -306,6 +319,7 @@ function expandShown(board, elCell, i, j) {
 function gameOver(value = LOST) {
     clearInterval(gTimerInterval)
     gGame.isOn = false;
+    gElUndoBtn.disabled = true;
     gElGameStateBtn.innerHTML = value;
     if (value === WIN) checkAndUpdateBestScore();
     // console.log('Game over - you: ', value)
@@ -382,3 +396,38 @@ function handleHint(i, j) {
     }, 1000)
 }
 
+// Undo all moves one by one.
+function undo(){
+    console.log('clicked')
+    if (!gGame.isOn) return
+    if (gMovesHistory.length === 0) return  //possible to disable/enable during game
+    var prevMove = gMovesHistory.pop();
+    console.log(prevMove)
+    var cellClass = getClassName(prevMove.location)
+    var elCell = document.querySelector(`.${cellClass}`);
+    var cell = gBoard[prevMove.location.i][prevMove.location.j];
+    console.log(cellClass)
+    console.log(elCell)
+    if (!prevMove.isShown) {  //isMarked = flag
+        cell.isMarked = !cell.isMarked;
+        if (cell.isMarked) {
+            elCell.innerHTML = FLAG;
+            gGame.markedCount++;
+        } else {
+            elCell.innerHTML = EMPTY;
+            gGame.markedCount--;
+        }
+        gElMarked.innerText = gGame.markedCount;
+    } else {  //isShown = mine or num
+        console.log('shown count', gGame.shownCount)
+        cell.isShown = false;
+        elCell.classList.remove('shown');
+        gGame.shownCount--;
+        console.log('shown count', gGame.shownCount)
+        elCell.innerHTML = EMPTY;
+        if (cell.isMine) {
+            gGame.lives++;
+            gElLives.innerText = gGame.lives;           
+        } 
+    }
+}
