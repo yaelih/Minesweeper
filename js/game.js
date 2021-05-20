@@ -30,7 +30,7 @@ var gElClickedHint;
 function initGame() {
     gStartTime = null;
     gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0, lives: 3, hints: 3, isHintOn: false }
-
+    
     gBoard = buildBoard()
     renderBoard(gBoard);
     renderLevelBtns();
@@ -271,17 +271,17 @@ function gameOver(value = LOST) {
     gGame.isOn = false;
     gElGameStateBtn.innerHTML = value;
     if (value === WIN) checkAndUpdateBestScore();
-    console.log('Game over - you: ', value)
+    // console.log('Game over - you: ', value)
 }
 
 function checkAndUpdateBestScore() {
     var currLevel = gLevel;
     var storageKeyName = 'bestScore' + currLevel;
     var bestScore = +localStorage.getItem(storageKeyName);
-    console.log('bestScore', bestScore)
+    // console.log('bestScore', bestScore)
 
     if (!bestScore || gGame.secsPassed < bestScore) {
-        console.log('bestScore', bestScore)
+        // console.log('bestScore', bestScore)
         localStorage.setItem(storageKeyName, gGame.secsPassed);
         elBestScoreSpan = document.querySelector('.best-score span');
         elBestScoreSpan.innerText = +localStorage.getItem(storageKeyName);
@@ -289,6 +289,7 @@ function checkAndUpdateBestScore() {
 }
 
 function restartGame() {
+    clearInterval(gTimerInterval);
     initGame();
 }
 
@@ -321,7 +322,7 @@ function renderHints() {
         strHTML += `<button class="hint" onclick="useHint(this)">${HINT}</button>`;
     }
     // console.log(strHTML);
-    var elHints = document.querySelector('.hints-container');
+    var elHints = document.querySelector('.hints-container span');
     elHints.innerHTML = strHTML;
 }
 
@@ -329,7 +330,7 @@ function useHint(elHint) {
     elHint.innerHTML = HINT_SELECTED;
     gElClickedHint = elHint;
     gGame.isHintOn = true;
-    console.log('hint was clicked', gElClickedHint)
+    // console.log('hint was clicked', gElClickedHint)
 }
 
 function handleHint(i, j) {
