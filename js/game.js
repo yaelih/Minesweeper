@@ -19,17 +19,21 @@ var gModes = {
 var gStartTime;
 var gTimerInterval;
 var gMovesHistory;
+var gSelfClicks;
 
 var gElGameStateBtn = document.querySelector('.game-state');
 var gElMarked = document.querySelector('.marked span');
 var gElTimer = document.querySelector('.timer span');
 var gElLives = document.querySelector('.lives span');
 var gElUndoBtn = document.querySelector(".undo button");
+var gElSafeClickSpan = document.querySelector(".safe-click span");
+var gElSafeClickBtn = document.querySelector(".safe-click button");
 var gElClickedHint;
 
 
 function initGame() {
     gStartTime = null;
+    gSelfClicks = 3;
     gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0, lives: 3, hints: 3, isHintOn: false }
     gMovesHistory = [];
     gBoard = buildBoard()
@@ -41,7 +45,9 @@ function initGame() {
     gElTimer.innerText = gGame.secsPassed;
     gElGameStateBtn.innerHTML = NEW_GAME;
     gElMarked.innerText = gGame.markedCount;
+    gElSafeClickSpan.innerText = gSelfClicks;
     gElUndoBtn.disabled = true;
+    gElSafeClickBtn.disabled = false;
 }
 
 // Builds empty board
@@ -58,7 +64,6 @@ function buildBoard() {
             board[i][j] = cell;
         }
     }
-    // console.log(board);
     return board;
 }
 
@@ -95,7 +100,6 @@ function renderHints() {
     for (var i = 0; i < gGame.hints; i++) {
         strHTML += `<button class="hint" onclick="hintClicked(this)">${HINT}</button>`;
     }
-    // console.log(strHTML);
     var elHints = document.querySelector('.hints-container span');
     elHints.innerHTML = strHTML;
 }
@@ -196,10 +200,9 @@ function cellClicked(elCell, i, j) {
         elCell.innerHTML = MINE;
         elCell.classList.add('shown');
         gGame.shownCount++;
-        // decrease from mines counter
         gGame.lives--;
         gElLives.innerText = gGame.lives;
-        gMovesHistory.push( {location: {i, j}, isShown: true} );
+        gMovesHistory.push({ location: { i, j }, isShown: true });
         if (gGame.lives < 1) {
             revealAllMines();
             gameOver();
@@ -227,11 +230,9 @@ function cellMarked(e, elCell) {
         cell.isMarked = true;
         elCell.innerHTML = FLAG;
         gGame.markedCount++;
-        // gMovesHistory.push( {location: {i: location.i, j: location.j}, isShown: true} );
         if (checkGameOver()) gameOver(WIN);
     }
-    gMovesHistory.push( {location: {i: location.i, j: location.j}, isShown: false} );
-    console.log('history', gMovesHistory)
+    gMovesHistory.push({ location: { i: location.i, j: location.j }, isShown: false });
     gElMarked.innerText = gGame.markedCount;
 }
 
@@ -242,14 +243,12 @@ function getCellfromElement(elCell) {
 
 // Returns the location of a specific cell
 function getLocationOfElement(elCell) {
-    // console.log(elCell.classList)
     var cellClass = elCell.classList[1]
     var cellClassAsArray = cellClass.split('-')
     var cellI = +cellClassAsArray[1]
     var cellJ = +cellClassAsArray[2]
     return { i: cellI, j: cellJ }
 }
-
 
 // Game ends when all mines are marked, and all the other cells are shown
 function checkGameOver() {
@@ -275,7 +274,6 @@ function revealAllMines() {
             if (cell.isMine) {
                 gBoard[i][j].isShown = true;
                 renderCell(i, j, MINE);
-                // elCell.classList.add('shown');
             }
         }
     }
@@ -285,22 +283,17 @@ function expandShown(board, elCell, i, j) {
 
     var cell = getCellfromElement(elCell);
     cell.isShown = true;
-    // elCell.classList.add('shown');
     if (cell.minesAroundCount > 0) {
         elCell.innerHTML = cell.minesAroundCount;
         gGame.shownCount++;
         elCell.classList.add('shown');
-        gMovesHistory.push( {location: {i, j}, isShown: true} );
-        console.log('history', gMovesHistory)
+        gMovesHistory.push({ location: { i, j }, isShown: true });
         return
     }
     gGame.shownCount++;
     elCell.classList.add('shown');
-    gMovesHistory.push( {location: {i, j}, isShown: true} );
-    console.log('history', gMovesHistory)
-    //the following line renders '0'
-    // renderCell(i, j, cell.minesAroundCount)
-
+    gMovesHistory.push({ location: { i, j }, isShown: true });
+ 
     for (var cellI = i - 1; cellI <= i + 1; cellI++) {
         if (cellI < 0 || cellI >= board.length) continue;
         for (var cellJ = j - 1; cellJ <= j + 1; cellJ++) {
@@ -320,19 +313,17 @@ function gameOver(value = LOST) {
     clearInterval(gTimerInterval)
     gGame.isOn = false;
     gElUndoBtn.disabled = true;
+    gElSafeClickBtn.disabled = true;
     gElGameStateBtn.innerHTML = value;
     if (value === WIN) checkAndUpdateBestScore();
-    // console.log('Game over - you: ', value)
 }
 
 function checkAndUpdateBestScore() {
     var currLevel = gLevel;
     var storageKeyName = 'bestScore' + currLevel;
     var bestScore = +localStorage.getItem(storageKeyName);
-    // console.log('bestScore', bestScore)
 
     if (!bestScore || gGame.secsPassed < bestScore) {
-        // console.log('bestScore', bestScore)
         localStorage.setItem(storageKeyName, gGame.secsPassed);
         elBestScoreSpan = document.querySelector('.best-score span');
         elBestScoreSpan.innerText = +localStorage.getItem(storageKeyName);
@@ -397,17 +388,13 @@ function handleHint(i, j) {
 }
 
 // Undo all moves one by one.
-function undo(){
-    console.log('clicked')
+function undo() {
     if (!gGame.isOn) return
     if (gMovesHistory.length === 0) return  //possible to disable/enable during game
     var prevMove = gMovesHistory.pop();
-    console.log(prevMove)
     var cellClass = getClassName(prevMove.location)
     var elCell = document.querySelector(`.${cellClass}`);
     var cell = gBoard[prevMove.location.i][prevMove.location.j];
-    console.log(cellClass)
-    console.log(elCell)
     if (!prevMove.isShown) {  //isMarked = flag
         cell.isMarked = !cell.isMarked;
         if (cell.isMarked) {
@@ -419,15 +406,42 @@ function undo(){
         }
         gElMarked.innerText = gGame.markedCount;
     } else {  //isShown = mine or num
-        console.log('shown count', gGame.shownCount)
         cell.isShown = false;
         elCell.classList.remove('shown');
         gGame.shownCount--;
-        console.log('shown count', gGame.shownCount)
         elCell.innerHTML = EMPTY;
         if (cell.isMine) {
             gGame.lives++;
-            gElLives.innerText = gGame.lives;           
-        } 
+            gElLives.innerText = gGame.lives;
+        }
     }
+}
+
+function safeClick() {
+    var elCell = getRandCoveredElCell(gBoard);
+    if (!elCell) return;
+    elCell.classList.add('safe-mark');
+    setTimeout(function(){
+        elCell.classList.remove('safe-mark');
+    }, 2000)
+    gSelfClicks--;
+    gElSafeClickSpan.innerHTML = gSelfClicks;
+    if (gSelfClicks === 0) gElSafeClickBtn.disabled = true;
+}
+
+function getRandCoveredElCell(board) {
+    var coveredLocations = [];
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[i].length; j++) {
+            var currCell = board[i][j];
+            if (!currCell.isShown && !currCell.isMine) {  //not sure if required not marked
+                coveredLocations.push({i,j});
+            }
+        }
+    }
+    if (coveredLocations.length === 0) return null;
+    var idx = getRandomInt(0, coveredLocations.length);
+    var location = coveredLocations[idx]
+    var elCell = document.querySelector(`.${getClassName({ i: location.i, j: location.j })}`);
+    return elCell;   
 }
