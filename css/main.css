@@ -11,32 +11,52 @@ body {
     border-radius: 5px;
     width: 350px;
     margin: auto;
-    /* background-color: lightgreen; */
     background-color: #06D6A0;
 }
 
 .level-btn {
     padding: 5px;
     width: 90px;
-    /* background-color: white; */
     background-color: #FFD166;
     border-radius: 5px;
+    margin: 2px;
 }
 
 .level-btn:hover {
-    /* background-color: rgb(248, 248, 112); */
     background-color: rgb(248, 248, 112);
     cursor: pointer;
 }
 
 .level-btn.active {
-    /* background-color: darksalmon; */
     background-color: #EF476F;
 }
 
+.mines,
+.lives,
+.timer {
+    margin-top: 10px;
+    width: 130px;
+    height: 40px;
+    display:inline-block;
+}
+
+.best-score {
+    margin-bottom: 10px;
+}
+
+.game-state {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+span {
+    color:chartreuse
+}
 
 table {
-    margin: 20px auto 70px auto;
+    margin: 20px auto 20px auto;
 }
 
 .cell {
@@ -54,24 +74,13 @@ table {
 }
 
 .shown {
-    /* background-color: rgb(182, 174, 174); */
     background-color: lightgray;
 }
 
-.game-state {
-    width: 40px;
-    height: 40px;
-    font-size: 1.5em;
+.hint {
+    font-size: 2em;
     cursor: pointer;
-}
-
-.lives,
-.mines,
-.timer {
-    margin-top: 10px;
-    width: 130px;
-    height: 40px;
-    display:inline-block;
+    margin: 20px auto 50px auto;
 }
 
 .footer {

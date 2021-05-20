@@ -10,26 +10,26 @@
 </head>
 
 <body onload="initGame()">
-
     <h1>Minesweeper</h1>
+
     <div class="level-container">
         <h2>Choose Your Level:</h2>
-        <!-- //TODO: create buttons dynamically -->
-        <button class="level-btn active" onclick="changeLevel(this, 0)">Beginner</button>
-        <button class="level-btn" onclick="changeLevel(this, 1)">Medium</button>
-        <button class="level-btn" onclick="changeLevel(this, 2)">Expert</button>
+        <div class="level-btns"></div>
     </div>
+
     <div class="game-info-container">
-        <div class="mines">Mines left: <span></span></div>
+        <div class="mines">Marked: <span></span></div>
         <div class="lives">Lives left: <span></span></div>
         <div class="timer">Time: <span></span></div>
-        <br>
+        <div class="best-score">Best Score: <span></span></div>
         <button class="game-state" onclick="restartGame()"></button>
-
     </div>
+
     <table>
         <tbody class="board"></tbody>
     </table>
+    
+    <div class="hints-container"></div>
 
     <div class="footer">
         Created by Yael Hazan
@@ -38,5 +38,4 @@
     <script src="js/utils.js"></script>
     <script src="js/game.js"></script>
 </body>
-
 </html>
