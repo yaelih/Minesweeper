@@ -154,7 +154,7 @@ function cellClicked(elCell, i, j) {
     if (cell.isMine) {
         cell.isShown = true;
         elCell.innerHTML = MINE;
-        // elCell.classList.add('shown');
+        elCell.classList.add('shown');
         gGame.shownCount++;
         // decrease from mines counter
         gGame.lives--;
@@ -245,11 +245,13 @@ function expandShown(board, elCell, i, j) {
     if (cell.minesAroundCount > 0) {
         elCell.innerHTML = cell.minesAroundCount;
         gGame.shownCount++;
+        elCell.classList.add('shown');
         return
     }
     gGame.shownCount++;
+    elCell.classList.add('shown');
     //the following line renders '0'
-    renderCell(i, j, cell.minesAroundCount)
+    // renderCell(i, j, cell.minesAroundCount)
 
     for (var cellI = i - 1; cellI <= i + 1; cellI++) {
         if (cellI < 0 || cellI >= board.length) continue;

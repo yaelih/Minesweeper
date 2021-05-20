@@ -73,7 +73,8 @@ table {
     background-color: gray;
 }
 
-.shown {
+.shown,
+.shown:hover {
     background-color: lightgray;
 }
 
