@@ -31,7 +31,7 @@ body {
     background-color: #EF476F;
 }
 
-.mines,
+.marked,
 .lives,
 .timer {
     margin-top: 10px;
@@ -78,13 +78,13 @@ table {
     background-color: lightgray;
 }
 
-.hints-container {
-    margin: 20px auto 50px auto;
+.undo button {
+    font-size: 1.4em;
+    cursor: pointer;
 }
 
-.hint {
-    font-size: 2em;
-    cursor: pointer;
+.hints-container {
+    margin: 20px auto 50px auto;
 }
 
 .footer {
