@@ -13,28 +13,35 @@
     <h1>&#x1f4a3; Minesweeper</h1>
 
     <div class="level-container">
-        <h2>Choose Your Level:</h2>
         <div class="level-btns"></div>
+        <div class="best-score">&#129351; Best Score: <span></span></div>
     </div>
 
     <div class="game-info-container">
         <div class="marked">Marked: <span></span></div>
         <div class="lives">Lives left: <span></span></div>
         <div class="timer">Time: <span></span></div>
-        <div class="best-score">&#129351; Best Score: <span></span></div>
-        <button class="game-state" onclick="restartGame()"></button>
     </div>
+
+    <div><button class="game-state" onclick="restartGame()"></button></div>
 
     <table>
         <tbody class="board"></tbody>
     </table>
 
-    <div class="undo">Undo: <button onclick="undo()">&#8617;</button></div>
-    <div class="safe-click"><button onclick="safeClick()">Safe Click</button><span></span> Clicks available</div>
-    <div class="hints-container">Hints:<br><span></span></div>
+    <div class="features">
+        <h3>Advances Features:</h3>
+        <div class="undo"><button class="undo" onclick="undo()">&#8617;</button><br>Undo</div>
+        <div class="safe-click"><button onclick="safeClick()">Safe Click</button><br><span></span> Clicks available
+        </div>
+        <div class="hints-container">Hints: <span></span></div><br>
+        <div class="manual"><button onclick="manualMode()">Manually Create</button><br><span></span></div>
+    </div>
 
     <div class="footer">
         Created by Yael Hazan
+        <div class="icons">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a
+                href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
     </div>
 
     <script src="js/utils.js"></script>

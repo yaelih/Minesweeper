@@ -30,6 +30,15 @@ body {
     background-color: #EF476F;
 }
 
+.best-score {
+    margin-top: 10px;
+}
+
+.best-score span {
+    color:#26547C;
+    font-weight: 500;
+}
+
 .marked,
 .lives,
 .timer {
@@ -39,8 +48,8 @@ body {
     display:inline-block;
 }
 
-.best-score {
-    margin-bottom: 10px;
+span {
+    color:chartreuse
 }
 
 .game-state {
@@ -48,10 +57,6 @@ body {
     height: 40px;
     font-size: 1.5em;
     cursor: pointer;
-}
-
-span {
-    color:chartreuse
 }
 
 table {
@@ -63,6 +68,7 @@ table {
     height: 30px;
     text-align: center;
     font-size: 1.2em;
+    font-weight: 500;
     border: 1px solid black;
     background-color: rgb(182, 174, 174);
     color: black;
@@ -81,27 +87,60 @@ table {
     background-color: lightpink;
 }
 
+.features {
+    margin-top:40px;
+    margin-bottom: 80px;
+}
+
+.undo,
+.safe-click,
+.manual,
+.hints-container {
+    display: inline-block;
+}
+
 .undo button {
-    font-size: 1.4em;
+    font-size: 1.2em;
     cursor: pointer;
-    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.safe-click {
+    margin: 0 20px 0 20px;
 }
 
 .safe-click button {
     background-color: rgb(248, 248, 112);
     padding: 7px 7px;
     border-radius: 5px;
-    margin-right: 10px;
     cursor: pointer;
-}
-
-.hints-container {
-    margin: 20px auto 50px auto;
 }
 
 .hint {
-    font-size: 2em;
     cursor: pointer;
+}
+
+.manual {
+    margin-top: 20px;
+}
+
+.manual button {
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: rgb(248, 248, 112);
+    padding: 7px 7px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 120px;
+}
+
+.manual span {
+    color: white;
+}
+
+.icons {
+    margin-top: 10px;
+    font-size: 9px;
 }
 
 .footer {
